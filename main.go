@@ -16,16 +16,18 @@ import (
 )
 
 var gc *colly.Collector
+var detailsCollector *colly.Collector
 var collection = model.FightersCollection{}
 var wg sync.WaitGroup
 
 func main() {
 	gc = colly.NewCollector()
+	detailsCollector = gc.Clone()
 	url := "https://www.ufc.com/athletes/all"
 
 	gc.OnHTML("div[class*='flipcard__action'] a[href]", parseAthletesListing)
-	gc.OnHTML("div[class='hero-profile-wrap']", getData)
 	gc.OnHTML("li.pager__item a[href]", moveNextPage)
+	detailsCollector.OnHTML("div[class='hero-profile-wrap']", getData)
 
 	err := gc.Visit(url)
 	if err != nil {
@@ -48,7 +50,7 @@ func parseAthletesListing(e *colly.HTMLElement) {
 
 	fmt.Println("Athlete link:", athleteURL)
 
-	e.Request.Visit(athleteURL)
+	detailsCollector.Visit(athleteURL)
 }
 
 func getData(e *colly.HTMLElement) {
