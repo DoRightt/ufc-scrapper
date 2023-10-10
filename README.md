@@ -66,4 +66,14 @@ This code extracts data about all fighters from UFC Website (https://ufc.com). T
 
  ## Usage
 
-Just run the script and wait for the scraper to get data from all fighters and pages. This may take quite a long time. Also, if ufc.com changes its html structure, the scraper may not work properly.
+1. Clone repository 
+`git clone https://github.com/DoRightt/ufc-scrapper.git`
+
+2. Install dependencies
+`go mod tidy`
+
+3. Just run the script and wait for the scraper to get data from all fighters and pages. This may take quite a long time. 
+
+Also, if ufc.com changes its html structure, the scraper may not work properly.
+
+Special thanks to [eneiromatos](https://github.com/eneiromatos) for example of his [ufc-web-scrapper](https://github.com/eneiromatos/UFC-Fighters-Scraper)
