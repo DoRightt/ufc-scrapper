@@ -59,43 +59,44 @@ type FightersCollection struct {
 }
 
 type FighterStats struct {
-	TotalSigStrLandned   int
-	TotalSigStrAttempted int
-	StrAccuracy          int
-	TotalTkdLanded       int
-	TotalTkdAttempted    int
-	TkdAccuracy          int
-	SigStrLanded         float32
-	SigStrAbs            float32
-	SigStrDefense        int8
-	TakedownDefense      int8
-	TakedownAvg          float32
-	SubmissionAvg        float32
-	KnockdownAvg         float32
-	AvgFightTime         string
-	WinByKO              int
-	WinBySub             int
-	WinByDec             int
+	TotalSigStrLandned   int     `json:"totalSigStrLandned"`
+	TotalSigStrAttempted int     `json:"totalSigStrAttempted"`
+	StrAccuracy          int     `json:"strAccuracy"`
+	TotalTkdLanded       int     `json:"totalTkdLanded"`
+	TotalTkdAttempted    int     `json:"totalTkdAttempted"`
+	TkdAccuracy          int     `json:"tkdAccuracy"`
+	SigStrLanded         float32 `json:"sigStrLanded"`
+	SigStrAbs            float32 `json:"sigStrAbs"`
+	SigStrDefense        int8    `json:"sigStrDefense"`
+	TakedownDefense      int8    `json:"takedownDefense"`
+	TakedownAvg          float32 `json:"takedownAvg"`
+	SubmissionAvg        float32 `json:"submissionAvg"`
+	KnockdownAvg         float32 `json:"knockdownAvg"`
+	AvgFightTime         string  `json:"avgFightTime"`
+	WinByKO              int     `json:"winByKO"`
+	WinBySub             int     `json:"winBySub"`
+	WinByDec             int     `json:"winByDec"`
 }
 
 type Fighter struct {
-	Name          string
-	NickName      string
-	Division      Division
-	Status        string
-	Hometown      string
-	TrainsAt      string
-	FightingStyle string
-	Age           string
-	Height        string
-	Weight        string
-	OctagonDebut  string
-	Reach         string
-	LegReach      string
-	Wins          int
-	Loses         int
-	Draw          int
-	Stats         FighterStats
+	Name          string       `json:"name"`
+	NickName      string       `json:"nickName"`
+	Division      Division     `json:"division"`
+	Status        string       `json:"status"`
+	Hometown      string       `json:"hometown"`
+	TrainsAt      string       `json:"trainsAt"`
+	FightingStyle string       `json:"fightingStyle"`
+	Age           int8         `json:"age"`
+	Height        float32      `json:"height"`
+	Weight        float32      `json:"weight"`
+	OctagonDebut  string       `json:"octagonDebut"`
+	Reach         float32      `json:"reach"`
+	LegReach      float32      `json:"legReach"`
+	Wins          int          `json:"wins"`
+	Loses         int          `json:"loses"`
+	Draw          int          `json:"draw"`
+	FighterURL    string       `json:"fighterURL"`
+	Stats         FighterStats `json:"stats"`
 }
 
 func (f *Fighter) SetStatistic(stat string) {
