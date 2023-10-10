@@ -49,20 +49,20 @@ This code extracts data about all fighters from UFC Website (https://ufc.com). T
 
 # Division ids:
 
-      Division        |     Value
---------------------- | -------------
- Flyweight            |      0
- Bantamweight         |      1
- Featherweight        |      2
- Lightweight          |      3
- Welterweight         |      4
- Middleweight         |      5
- Lightheavyweight     |      6
- Heavyweight          |      7
- WomensStrawweight    |      8
- WomensFlyweight      |      9
- WomensBantamweight   |      10
- WomensFeatherweight  |      11
+|       Division       | Value |
+|----------------------|-------|
+| Flyweight            |   0   |
+| Bantamweight         |   1   |
+| Featherweight        |   2   |
+| Lightweight          |   3   |
+| Welterweight         |   4   |
+| Middleweight         |   5   |
+| Lightheavyweight     |   6   |
+| Heavyweight          |   7   |
+| WomensStrawweight    |   8   |
+| WomensFlyweight      |   9   |
+| WomensBantamweight   |  10   |
+| WomensFeatherweight  |  11   |
 
  ## Usage
 
