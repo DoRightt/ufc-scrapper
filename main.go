@@ -43,14 +43,16 @@ func main() {
 
 func parseAthletesListing(e *colly.HTMLElement) {
 	wg.Add(1)
-	defer wg.Done()
 
-	athleteURL := e.Attr("href")
-	athleteURL = e.Request.AbsoluteURL(athleteURL)
+	go func() {
+		defer wg.Done()
+		athleteURL := e.Attr("href")
+		athleteURL = e.Request.AbsoluteURL(athleteURL)
 
-	fmt.Println("Athlete link:", athleteURL)
+		fmt.Println("Athlete link:", athleteURL)
 
-	detailsCollector.Visit(athleteURL)
+		detailsCollector.Visit(athleteURL)
+	}()
 }
 
 func getData(e *colly.HTMLElement) {
