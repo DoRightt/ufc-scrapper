@@ -96,6 +96,7 @@ type Fighter struct {
 	Loses         int          `json:"loses"`
 	Draw          int          `json:"draw"`
 	FighterURL    string       `json:"fighterURL"`
+	ImageUrl      string       `json:"imageUrl"`
 	Stats         FighterStats `json:"stats"`
 }
 

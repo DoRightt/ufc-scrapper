@@ -68,6 +68,7 @@ func getData(e *colly.HTMLElement) {
 		Name:       profileEl.Find("h1.hero-profile__name").Text(),
 		NickName:   profileEl.Find("p.hero-profile__nickname").Text(),
 		FighterURL: e.Request.URL.String(),
+		ImageUrl:   profileEl.Find(".hero-profile__image-wrap img").AttrOr("src", ""),
 	}
 
 	fighter.SetDivision(profileEl.Find("p.hero-profile__division-title").Text())
