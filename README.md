@@ -23,6 +23,7 @@ This code extracts data about all fighters from UFC Website (https://ufc.com). T
             "loses": 7,
             "draw": 0,
             "fighterURL": "https://www.ufc.com/athlete/danny-abbadi",
+            "imageUrl": "https://some.url
             "stats": {
                 "totalSigStrLandned": 1258,
                 "totalSigStrAttempted": 2981,
@@ -49,30 +50,30 @@ This code extracts data about all fighters from UFC Website (https://ufc.com). T
 
 # Division ids:
 
-|       Division       | Value |
-|----------------------|-------|
-| Flyweight            |   0   |
-| Bantamweight         |   1   |
-| Featherweight        |   2   |
-| Lightweight          |   3   |
-| Welterweight         |   4   |
-| Middleweight         |   5   |
-| Lightheavyweight     |   6   |
-| Heavyweight          |   7   |
-| WomensStrawweight    |   8   |
-| WomensFlyweight      |   9   |
-| WomensBantamweight   |  10   |
-| WomensFeatherweight  |  11   |
+| Division            | Value |
+| ------------------- | ----- |
+| Flyweight           | 0     |
+| Bantamweight        | 1     |
+| Featherweight       | 2     |
+| Lightweight         | 3     |
+| Welterweight        | 4     |
+| Middleweight        | 5     |
+| Lightheavyweight    | 6     |
+| Heavyweight         | 7     |
+| WomensStrawweight   | 8     |
+| WomensFlyweight     | 9     |
+| WomensBantamweight  | 10    |
+| WomensFeatherweight | 11    |
 
- ## Usage
+## Usage
 
-1. Clone repository 
-`git clone https://github.com/DoRightt/ufc-scrapper.git`
+1. Clone repository
+   `git clone https://github.com/DoRightt/ufc-scrapper.git`
 
 2. Install dependencies
-`go mod tidy`
+   `go mod tidy`
 
-3. Just run the script and wait for the scraper to get data from all fighters and pages. This may take quite a long time. 
+3. Just run the script and wait for the scraper to get data from all fighters and pages. This may take quite a long time.
 
 Also, if ufc.com changes its html structure, the scraper may not work properly.
 
