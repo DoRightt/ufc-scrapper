@@ -1,7 +1,7 @@
 package model
 
 import (
-	"fmt"
+	"projects/ufc-scrapper/logger"
 	"strconv"
 	"strings"
 )
@@ -103,13 +103,14 @@ type Fighter struct {
 
 func (f *Fighter) SetStatistic(stat string) {
 	parts := strings.Split(strings.Split(stat, " ")[0], "-")
+	l := logger.Get()
 
 	var scores []int
 
 	for _, part := range parts {
 		num, err := strconv.Atoi(part)
 		if err != nil {
-			fmt.Println("Conversion error:", err)
+			l.Errorf("[%s] Conversion error: %s, with part: '%s' of %s", f.Name, err, part, parts)
 			scores = append(scores, 0)
 			return
 		}

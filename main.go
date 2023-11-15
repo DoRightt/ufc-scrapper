@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"projects/ufc-scrapper/logger"
 	model "projects/ufc-scrapper/models"
 	"regexp"
 	"strconv"
@@ -14,16 +15,25 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gocolly/colly"
+	"go.uber.org/zap"
 )
 
 var gc *colly.Collector
 var detailsCollector *colly.Collector
 var collection = model.FightersCollection{}
 var wg sync.WaitGroup
+var l *zap.SugaredLogger
 
 func main() {
+	if err := logger.Initialize(); err != nil {
+		fmt.Println("Error while initializing logger: ", err)
+		return
+	}
+
+	l = logger.Get()
 	gc = colly.NewCollector()
 	detailsCollector = gc.Clone()
+
 	url := "https://www.ufc.com/athletes/all"
 
 	gc.OnHTML("div[class*='flipcard__action'] a[href]", parseAthletesListing)
@@ -97,7 +107,7 @@ func parseBioFields(f *model.Fighter, fighterEl *goquery.Selection) {
 		case "Age":
 			v, err := strconv.Atoi(fieldValue)
 			if err != nil {
-				fmt.Println("Age conversion error:", err)
+				l.Errorf("Age conversion error: %s", err)
 			} else {
 				f.Age = int8(v)
 			}
@@ -112,14 +122,14 @@ func parseBioFields(f *model.Fighter, fighterEl *goquery.Selection) {
 		case "Height":
 			v, err := strconv.ParseFloat(fieldValue, 32)
 			if err != nil {
-				fmt.Println("Height conversion error:", err)
+				l.Errorf("Height conversion error: %s", err)
 			} else {
 				f.Height = float32(v)
 			}
 		case "Weight":
 			v, err := strconv.ParseFloat(fieldValue, 32)
 			if err != nil {
-				fmt.Println("Weight conversion error:", err)
+				l.Errorf("Weight conversion error:", err)
 			} else {
 				f.Weight = float32(v)
 			}
@@ -129,14 +139,14 @@ func parseBioFields(f *model.Fighter, fighterEl *goquery.Selection) {
 		case "Reach":
 			v, err := strconv.ParseFloat(fieldValue, 32)
 			if err != nil {
-				fmt.Println("Reach conversion error:", err)
+				l.Error("Reach conversion error:", err)
 			} else {
 				f.Reach = float32(v)
 			}
 		case "Leg reach":
 			v, err := strconv.ParseFloat(fieldValue, 32)
 			if err != nil {
-				fmt.Println("Leg Reach conversion error:", err)
+				l.Error("Leg Reach conversion error:", err)
 			} else {
 				f.LegReach = float32(v)
 			}
@@ -156,7 +166,7 @@ func parseMainStats(f *model.Fighter, fighterEl *goquery.Selection) {
 			if fieldValue != "" {
 				v, err := strconv.ParseFloat(fieldValue, 32)
 				if err != nil {
-					fmt.Println("Sig. Str. Landed conversion error:", err)
+					l.Error("Sig. Str. Landed conversion error:", err)
 				} else {
 					f.Stats.SigStrLanded = float32(v)
 				}
@@ -165,7 +175,7 @@ func parseMainStats(f *model.Fighter, fighterEl *goquery.Selection) {
 			if fieldValue != "" {
 				v, err := strconv.ParseFloat(fieldValue, 32)
 				if err != nil {
-					fmt.Println("Sig. Str. Absorbed conversion error:", err)
+					l.Error("Sig. Str. Absorbed conversion error:", err)
 				} else {
 					f.Stats.SigStrAbs = float32(v)
 				}
@@ -175,7 +185,7 @@ func parseMainStats(f *model.Fighter, fighterEl *goquery.Selection) {
 			if numericString != "" {
 				v, err := strconv.Atoi(numericString)
 				if err != nil {
-					fmt.Println("Sig. Str. Defense conversion error:", err)
+					l.Error("Sig. Str. Defense conversion error:", err)
 				} else {
 					f.Stats.SigStrDefense = int8(v)
 				}
@@ -185,7 +195,7 @@ func parseMainStats(f *model.Fighter, fighterEl *goquery.Selection) {
 			v, err := strconv.Atoi(numericString)
 			if err != nil {
 				if fieldValue != "" {
-					fmt.Println("Takedown Defense conversion error:", err)
+					l.Error("Takedown Defense conversion error:", err)
 				}
 			} else {
 				f.Stats.TakedownDefense = int8(v)
@@ -194,7 +204,7 @@ func parseMainStats(f *model.Fighter, fighterEl *goquery.Selection) {
 			if fieldValue != "" {
 				v, err := strconv.ParseFloat(fieldValue, 32)
 				if err != nil {
-					fmt.Println("Takedown avg conversion error:", err)
+					l.Error("Takedown avg conversion error:", err)
 				} else {
 					f.Stats.TakedownAvg = float32(v)
 				}
@@ -203,7 +213,7 @@ func parseMainStats(f *model.Fighter, fighterEl *goquery.Selection) {
 			if fieldValue != "" {
 				v, err := strconv.ParseFloat(fieldValue, 32)
 				if err != nil {
-					fmt.Println("Submission avg conversion error:", err)
+					l.Error("Submission avg conversion error:", err)
 				} else {
 					f.Stats.SubmissionAvg = float32(v)
 				}
@@ -212,7 +222,7 @@ func parseMainStats(f *model.Fighter, fighterEl *goquery.Selection) {
 			if fieldValue != "" {
 				v, err := strconv.ParseFloat(fieldValue, 32)
 				if err != nil {
-					fmt.Println("Knockdown Avg conversion error:", err)
+					l.Error("Knockdown Avg conversion error:", err)
 				} else {
 					f.Stats.KnockdownAvg = float32(v)
 				}
@@ -234,14 +244,14 @@ func parseSpecialStats(f *model.Fighter, fighterEl *goquery.Selection) {
 		case "Sig. Strikes Landed":
 			v, err := strconv.Atoi(fieldValue)
 			if err != nil {
-				fmt.Println("Total Sig. Strikes Landed conversion error:", err)
+				l.Error("Total Sig. Strikes Landed conversion error:", err)
 			} else {
 				f.Stats.TotalSigStrLandned = v
 			}
 		case "Sig. Strikes Attempted":
 			v, err := strconv.Atoi(fieldValue)
 			if err != nil {
-				fmt.Println("Total Sig. Strikes Attempted conversion error:", err)
+				l.Error("Total Sig. Strikes Attempted conversion error:", err)
 			} else {
 				f.Stats.TotalSigStrAttempted = v
 			}
@@ -249,7 +259,7 @@ func parseSpecialStats(f *model.Fighter, fighterEl *goquery.Selection) {
 			v, err := strconv.Atoi(fieldValue)
 			if err != nil {
 				if fieldValue != "" {
-					fmt.Println("Total Takedowns Landed conversion error:", err)
+					l.Error("Total Takedowns Landed conversion error:", err)
 				}
 			} else {
 				f.Stats.TotalTkdLanded = v
@@ -257,7 +267,7 @@ func parseSpecialStats(f *model.Fighter, fighterEl *goquery.Selection) {
 		case "Takedowns Attempted":
 			v, err := strconv.Atoi(fieldValue)
 			if err != nil {
-				fmt.Println("Total Takedowns Attempted conversion error:", err)
+				l.Error("Total Takedowns Attempted conversion error:", err)
 			} else {
 				f.Stats.TotalTkdAttempted = v
 			}
@@ -283,16 +293,15 @@ func parseWinMethodStats(f *model.Fighter, el *goquery.Selection) {
 		switch fieldLabel {
 		case "KO/TKO":
 			v, err := strconv.Atoi(strings.Split(fieldValue, " ")[0])
-
 			if err != nil {
-				fmt.Println("KO/TKO data conversion error:", err)
+				l.Error("KO/TKO data conversion error:", err)
 			} else {
 				f.Stats.WinByKO = v
 			}
 		case "DEC":
 			v, err := strconv.Atoi(strings.Split(fieldValue, " ")[0])
 			if err != nil {
-				fmt.Println("DEC data conversion error:", err)
+				l.Error("DEC data conversion error:", err)
 			} else {
 				f.Stats.WinByDec = v
 			}
@@ -300,7 +309,7 @@ func parseWinMethodStats(f *model.Fighter, el *goquery.Selection) {
 		case "SUB":
 			v, err := strconv.Atoi(strings.Split(fieldValue, " ")[0])
 			if err != nil {
-				fmt.Println("SUB data conversion error:", err)
+				l.Error("SUB data conversion error:", err)
 			} else {
 				f.Stats.WinBySub = v
 			}
@@ -320,30 +329,30 @@ func moveNextPage(e *colly.HTMLElement) {
 func saveToJSON(c model.FightersCollection) {
 	jsonData, err := json.Marshal(c)
 	if err != nil {
-		fmt.Println("Error while marshalling:", err)
+		l.Error("Error while marshalling:", err)
 		return
 	}
 
 	file, err := os.Create("fighters.json")
 	if err != nil {
-		fmt.Println("File openning error:", err)
+		l.Error("File openning error:", err)
 		return
 	}
 	defer file.Close()
 
 	_, err = file.Write(jsonData)
 	if err != nil {
-		fmt.Println("File writting error:", err)
+		l.Error("File writting error:", err)
 		return
 	}
 }
 
 func getDebutTimestamp(octagonDebut string) int {
 	layout := "Jan. 2, 2006"
-	
+
 	parsedTime, err := time.Parse(layout, octagonDebut)
 	if err != nil {
-		fmt.Println("Error while date parsing:", err)
+		l.Error("Error while date parsing:", err)
 		return 0
 	}
 
