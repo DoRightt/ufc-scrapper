@@ -17,6 +17,7 @@ This code extracts data about all fighters from UFC Website (https://ufc.com). T
             "height": 72,
             "weight": 196,
             "octagonDebut": "Dec. 16, 2012",
+            "debutTimestamp": 1355616000,
             "reach": 73.50,
             "legReach": 43.00,
             "wins": 25,
