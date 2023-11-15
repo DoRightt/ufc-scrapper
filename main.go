@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gocolly/colly"
@@ -67,7 +68,7 @@ func getData(e *colly.HTMLElement) {
 	fighter := model.Fighter{
 		Name:       profileEl.Find("h1.hero-profile__name").Text(),
 		NickName:   profileEl.Find("p.hero-profile__nickname").Text(),
-		FighterURL: e.Request.URL.String(),
+		FighterUrl: e.Request.URL.String(),
 		ImageUrl:   profileEl.Find(".hero-profile__image-wrap img").AttrOr("src", ""),
 	}
 
@@ -124,6 +125,7 @@ func parseBioFields(f *model.Fighter, fighterEl *goquery.Selection) {
 			}
 		case "Octagon Debut":
 			f.OctagonDebut = fieldValue
+			f.DebutTimestamp = getDebutTimestamp(fieldValue)
 		case "Reach":
 			v, err := strconv.ParseFloat(fieldValue, 32)
 			if err != nil {
@@ -334,4 +336,16 @@ func saveToJSON(c model.FightersCollection) {
 		fmt.Println("File writting error:", err)
 		return
 	}
+}
+
+func getDebutTimestamp(octagonDebut string) int {
+	layout := "Jan. 2, 2006"
+	
+	parsedTime, err := time.Parse(layout, octagonDebut)
+	if err != nil {
+		fmt.Println("Error while date parsing:", err)
+		return 0
+	}
+
+	return int(parsedTime.Unix())
 }

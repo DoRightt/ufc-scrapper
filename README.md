@@ -22,7 +22,7 @@ This code extracts data about all fighters from UFC Website (https://ufc.com). T
             "wins": 25,
             "loses": 7,
             "draw": 0,
-            "fighterURL": "https://www.ufc.com/athlete/danny-abbadi",
+            "fighterUrl": "https://www.ufc.com/athlete/danny-abbadi",
             "imageUrl": "https://some.url
             "stats": {
                 "totalSigStrLandned": 1258,

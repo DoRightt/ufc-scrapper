@@ -79,25 +79,26 @@ type FighterStats struct {
 }
 
 type Fighter struct {
-	Name          string       `json:"name"`
-	NickName      string       `json:"nickName"`
-	Division      Division     `json:"division"`
-	Status        string       `json:"status"`
-	Hometown      string       `json:"hometown"`
-	TrainsAt      string       `json:"trainsAt"`
-	FightingStyle string       `json:"fightingStyle"`
-	Age           int8         `json:"age"`
-	Height        float32      `json:"height"`
-	Weight        float32      `json:"weight"`
-	OctagonDebut  string       `json:"octagonDebut"`
-	Reach         float32      `json:"reach"`
-	LegReach      float32      `json:"legReach"`
-	Wins          int          `json:"wins"`
-	Loses         int          `json:"loses"`
-	Draw          int          `json:"draw"`
-	FighterURL    string       `json:"fighterURL"`
-	ImageUrl      string       `json:"imageUrl"`
-	Stats         FighterStats `json:"stats"`
+	Name           string       `json:"name"`
+	NickName       string       `json:"nickName"`
+	Division       Division     `json:"division"`
+	Status         string       `json:"status"`
+	Hometown       string       `json:"hometown"`
+	TrainsAt       string       `json:"trainsAt"`
+	FightingStyle  string       `json:"fightingStyle"`
+	Age            int8         `json:"age"`
+	Height         float32      `json:"height"`
+	Weight         float32      `json:"weight"`
+	OctagonDebut   string       `json:"octagonDebut"`
+	DebutTimestamp int          `json:"debutTimestamp"`
+	Reach          float32      `json:"reach"`
+	LegReach       float32      `json:"legReach"`
+	Wins           int          `json:"wins"`
+	Loses          int          `json:"loses"`
+	Draw           int          `json:"draw"`
+	FighterUrl     string       `json:"fighterUrl"`
+	ImageUrl       string       `json:"imageUrl"`
+	Stats          FighterStats `json:"stats"`
 }
 
 func (f *Fighter) SetStatistic(stat string) {
