@@ -75,6 +75,8 @@ This code extracts data about all fighters from UFC Website (https://ufc.com). T
 
 3. Just run the script and wait for the scraper to get data from all fighters and pages. This may take quite a long time.
 
+Logger will create a log.json file in logger/log.json
+
 Also, if ufc.com changes its html structure, the scraper may not work properly.
 
 Special thanks to [eneiromatos](https://github.com/eneiromatos) for example of his [ufc-web-scrapper](https://github.com/eneiromatos/UFC-Fighters-Scraper)
