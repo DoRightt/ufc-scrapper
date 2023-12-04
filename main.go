@@ -36,6 +36,15 @@ func main() {
 
 	url := "https://www.ufc.com/athletes/all"
 
+	gc.Limit(&colly.LimitRule{
+		DomainGlob:  "*",
+		RandomDelay: 5 * time.Second,
+	})
+
+	gc.OnRequest(func(r *colly.Request) {
+		r.Headers.Set("User-Agent", "Mozilla/5.0")
+	})
+
 	gc.OnHTML("div[class*='flipcard__action'] a[href]", parseAthletesListing)
 	gc.OnHTML("li.pager__item a[href]", moveNextPage)
 	detailsCollector.OnHTML("div[class='hero-profile-wrap']", getData)
@@ -54,16 +63,14 @@ func main() {
 
 func parseAthletesListing(e *colly.HTMLElement) {
 	wg.Add(1)
+	defer wg.Done()
 
-	go func() {
-		defer wg.Done()
-		athleteURL := e.Attr("href")
-		athleteURL = e.Request.AbsoluteURL(athleteURL)
+	athleteURL := e.Attr("href")
+	athleteURL = e.Request.AbsoluteURL(athleteURL)
 
-		fmt.Println("Athlete link:", athleteURL)
+	fmt.Println("Athlete link:", athleteURL)
 
-		detailsCollector.Visit(athleteURL)
-	}()
+	detailsCollector.Visit(athleteURL)
 }
 
 func getData(e *colly.HTMLElement) {
