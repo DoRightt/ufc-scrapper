@@ -1,3 +1,5 @@
+.env
+
 fighters.json
 fighters_bckp.json
 /logger/log.json
