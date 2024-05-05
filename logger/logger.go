@@ -10,7 +10,7 @@ import (
 
 var logger *zap.SugaredLogger
 
-func Initialize() error {
+func Initialize(flag int) error {
 	config := zap.NewDevelopmentConfig()
 
 	config.Encoding = "json"
@@ -29,7 +29,7 @@ func Initialize() error {
 
 	config.Level = zap.NewAtomicLevelAt(zapcore.Level(logLevel))
 
-	file, err := os.OpenFile("logger/log.json", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+	file, err := os.OpenFile("logger/log.json", os.O_WRONLY|os.O_CREATE|flag, 0644)
 	if err != nil {
 		log.Fatalf("Failed to open log file: %s", err)
 		return err

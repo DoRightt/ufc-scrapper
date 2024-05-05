@@ -1,7 +1,7 @@
 package main
 
 import (
-	"encoding/json"
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -15,8 +15,11 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gocolly/colly"
+	"github.com/joho/godotenv"
 	"go.uber.org/zap"
 )
+
+var proxys []string
 
 var gc *colly.Collector
 var detailsCollector *colly.Collector
@@ -25,7 +28,17 @@ var wg sync.WaitGroup
 var l *zap.SugaredLogger
 
 func main() {
-	if err := logger.Initialize(); err != nil {
+	var useProxy bool
+	var startPage int
+	var toAdd bool
+
+	flag.BoolVar(&toAdd, "add", false, "Add fighters")
+	flag.BoolVar(&useProxy, "proxy", false, "Use proxy")
+	flag.IntVar(&startPage, "start", 0, "Start page")
+	flag.Parse()
+
+	logFlag := getLoggerFlag(toAdd)
+	if err := logger.Initialize(logFlag); err != nil {
 		fmt.Println("Error while initializing logger: ", err)
 		return
 	}
@@ -36,12 +49,37 @@ func main() {
 
 	url := "https://www.ufc.com/athletes/all"
 
-	gc.Limit(&colly.LimitRule{
-		DomainGlob:  "*",
-		RandomDelay: 5 * time.Second,
-	})
+	if startPage > 0 {
+		url = fmt.Sprintf("%s?page=%d", url, startPage)
+	}
+
+	if !useProxy {
+		gc.Limit(&colly.LimitRule{
+			DomainGlob:  "*",
+			RandomDelay: 3 * time.Second,
+		})
+	}
+
+	if useProxy {
+		if err := godotenv.Load(".env"); err != nil {
+			log.Print("Error loading .env file")
+		}
+
+		setProxys()
+	}
 
 	gc.OnRequest(func(r *colly.Request) {
+		if useProxy {
+			login := os.Getenv("LOGIN")
+			pass := os.Getenv("PASS")
+
+			proxy := getProxy()
+
+			proxyUrl := fmt.Sprintf("socks5h://%s:%s@%s", login, pass, proxy)
+
+			gc.SetProxy(proxyUrl)
+			l.Infow(proxy, "type", "proxy address")
+		}
 		r.Headers.Set("User-Agent", "Mozilla/5.0")
 	})
 
@@ -57,8 +95,9 @@ func main() {
 	wg.Wait()
 
 	fmt.Println("DONE")
+	l.Infow("DONE", "type", "result")
 
-	saveToJSON(collection)
+	saveToJSON(collection, toAdd)
 }
 
 func parseAthletesListing(e *colly.HTMLElement) {
@@ -69,8 +108,20 @@ func parseAthletesListing(e *colly.HTMLElement) {
 	athleteURL = e.Request.AbsoluteURL(athleteURL)
 
 	fmt.Println("Athlete link:", athleteURL)
+	l.Infow(athleteURL, "type", "athlete link")
 
 	detailsCollector.Visit(athleteURL)
+
+	// Multithread scrapping
+	// go func() {
+	// 	defer wg.Done()
+	// 	athleteURL := e.Attr("href")
+	// 	athleteURL = e.Request.AbsoluteURL(athleteURL)
+
+	// 	fmt.Println("Athlete link:", athleteURL)
+
+	// 	detailsCollector.Visit(athleteURL)
+	// }()
 }
 
 func getData(e *colly.HTMLElement) {
@@ -322,46 +373,24 @@ func parseWinMethodStats(f *model.Fighter, el *goquery.Selection) {
 			}
 		}
 	})
-
 }
 
 func moveNextPage(e *colly.HTMLElement) {
+	wg.Add(1)
+	defer wg.Done()
+
 	nextUrl := e.Attr("href")
 	nextUrl = e.Request.AbsoluteURL(nextUrl)
 	fmt.Println("Next page:", nextUrl)
+	l.Infow(nextUrl, "type", "next page")
 
 	e.Request.Visit(nextUrl)
 }
 
-func saveToJSON(c model.FightersCollection) {
-	jsonData, err := json.Marshal(c)
-	if err != nil {
-		l.Error("Error while marshalling:", err)
-		return
+func saveToJSON(c model.FightersCollection, toAdd bool) {
+	if toAdd {
+		addToExistedCollection(c)
+	} else {
+		createNewCollection(c)
 	}
-
-	file, err := os.Create("fighters.json")
-	if err != nil {
-		l.Error("File openning error:", err)
-		return
-	}
-	defer file.Close()
-
-	_, err = file.Write(jsonData)
-	if err != nil {
-		l.Error("File writting error:", err)
-		return
-	}
-}
-
-func getDebutTimestamp(octagonDebut string) int {
-	layout := "Jan. 2, 2006"
-
-	parsedTime, err := time.Parse(layout, octagonDebut)
-	if err != nil {
-		l.Error("Error while date parsing:", err)
-		return 0
-	}
-
-	return int(parsedTime.Unix())
 }
