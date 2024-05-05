@@ -75,7 +75,29 @@ This code extracts data about all fighters from UFC Website (https://ufc.com). T
    `go mod tidy`
 
 3. Just run the script and wait for the scraper to get data from all fighters and pages. This may take quite a long time.
+   `go run *.go`
 
+## Info
+
+1. To use proxy you have to set --proxy flag:
+
+   `go run *.go --proxy`
+
+   and create .env file with this like structure:
+
+```
+LOGIN="user12345"
+PASS="qwerty123"
+PROXYS="191.202.113.106:9229/191.128.214.16:3212/191.128.134.121:5009/..."
+```
+
+2. To start scrapping from particular page use --start flag:
+  `go run *.go --start=70`
+
+3. If you want to add scrapper result to your previous JSON result structure you should add -add flag, otherwise the result will be overwritten
+  `go run *.go --add`
+
+  
 Logger will create a log.json file in logger/log.json
 
 Also, if ufc.com changes its html structure, the scraper may not work properly.
